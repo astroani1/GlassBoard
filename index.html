@@ -274,7 +274,7 @@
 
         const clearAuth = () => {
             localStorage.removeItem('jiraCloneAuth');
-            // keep profile in localStorage for convenience but remove flag
+            localStorage.removeItem('jiraCloneProfile');
         };
 
         // --- Mock Data & Constants ---
@@ -1906,7 +1906,11 @@
             useEffect(() => { localStorage.setItem('jiraCloneTheme', theme); }, [theme]);
 
             useEffect(() => {
-                localStorage.setItem('jiraCloneAuth', isAuthenticated ? 'true' : '');
+                if (isAuthenticated) {
+                    localStorage.setItem('jiraCloneAuth', 'true');
+                } else {
+                    localStorage.removeItem('jiraCloneAuth');
+                }
             }, [isAuthenticated]);
 
             useEffect(() => {
@@ -2026,6 +2030,7 @@
                 setUserProfile(profile);
                 saveAuth(profile);
                 setIsAuthenticated(true);
+                console.log('Signed in as', profile.email);
             };
 
             const handleAuthSignUp = ({ name, email }) => {
@@ -2040,6 +2045,7 @@
                 setUserProfile(profile);
                 saveAuth(profile);
                 setIsAuthenticated(true);
+                console.log('Signed up as', profile.email);
             };
 
             const handleAuthGoogle = (email) => {
@@ -2054,11 +2060,14 @@
                 setUserProfile(profile);
                 saveAuth(profile);
                 setIsAuthenticated(true);
+                console.log('Signed in with Google (sim):', profile.email);
             };
 
             const handleSignOut = () => {
                 setIsAuthenticated(false);
+                setUserProfile({ name: 'Guest', role: '', email: '', initials: '??', location: '', bio: '' });
                 clearAuth();
+                console.log('Signed out');
             };
 
             return (
@@ -2139,6 +2148,7 @@
                                 >
                                     <Icon name="settings" size={20} />
                                 </button>
+                                <button onClick={handleSignOut} className="px-3 py-1.5 rounded-lg text-sm bg-white/10 text-white hover:bg-white/20 transition-all">Sign Out</button>
                             </div>
                         </header>
 
