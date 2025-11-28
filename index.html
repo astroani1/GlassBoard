@@ -17,18 +17,63 @@
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js and data labels plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
     <style>
         /* --- Liquid Glass Theme Setup --- */
+        :root {
+            --bg-color: #4158D0;
+            --bg-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+            --text-color: #1e293b;
+            /* Slate text tokens for consistent mapping */
+            --text-800: #0f172a;
+            --text-700: #1e293b;
+            --text-600: #334155;
+            --text-500: #64748b;
+            --text-400: #94a3b8;
+            --text-300: #cbd5e1;
+            --text-contrast: #0f172a;
+            --glass-panel-bg: rgba(255, 255, 255, 0.15);
+            --glass-sidebar-bg: rgba(15, 23, 42, 0.6);
+            --glass-column-bg: rgba(255, 255, 255, 0.2);
+            --glass-card-bg: rgba(255, 255, 255, 0.75);
+            --glass-card-hover-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-border-strong: rgba(255, 255, 255, 0.5);
+        }
+
+        .dark {
+            --bg-color: #0b1220;
+            --bg-image: linear-gradient(120deg,#0b1220 0%, #0f1724 40%, #0b1220 100%);
+            --text-color: #e6eef8;
+            /* Lighter slate tokens for dark theme readability */
+            --text-800: #e6eef8;
+            --text-700: #dbeafe;
+            --text-600: #cfe9ff;
+            --text-500: #9fb8d4;
+            --text-400: #94a6b8;
+            --text-300: #cddff6;
+            --text-contrast: #0f172a;
+            --glass-panel-bg: rgba(255, 255, 255, 0.03);
+            --glass-sidebar-bg: rgba(2, 6, 23, 0.6);
+            --glass-column-bg: rgba(255, 255, 255, 0.04);
+            --glass-card-bg: rgba(20, 25, 33, 0.6);
+            --glass-card-hover-bg: rgba(25, 30, 38, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-border-strong: rgba(255, 255, 255, 0.08);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             /* Rich Mesh Gradient Background */
-            background-color: #4158D0;
-            background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+            background-color: var(--bg-color);
+            background-image: var(--bg-image);
             background-attachment: fixed;
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            color: #1e293b;
+            color: var(--text-color);
             overflow: hidden; /* Prevent body scroll, let main container scroll */
         }
 
@@ -40,52 +85,52 @@
 
         /* Glass Utilities */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--glass-panel-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--glass-border);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
 
         .glass-sidebar {
-            background: rgba(15, 23, 42, 0.6); /* Darker glass for contrast */
+            background: var(--glass-sidebar-bg); /* Darker glass for contrast */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid var(--glass-border);
         }
 
         .glass-column {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--glass-column-bg);
             backdrop-filter: blur(16px);
             border-radius: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--glass-border);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.75); /* More opaque for readability */
+            background: var(--glass-card-bg); /* More opaque for readability */
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--glass-border-strong);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--glass-card-hover-bg);
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             border-color: rgba(255, 255, 255, 0.8);
         }
 
         .glass-header {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .glass-modal {
-            background: rgba(255, 255, 255, 0.85);
+            background: var(--glass-card-bg);
             backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--glass-border-strong);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
@@ -108,13 +153,129 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.6); 
         }
+
+        /* Theme Toggle UI */
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 46px;
+            height: 26px;
+            display: inline-block;
+        }
+        .toggle-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: rgba(255,255,255,0.25);
+            border-radius: 9999px;
+            transition: background 0.2s ease;
+        }
+        .slider::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 9999px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
+        }
+        input:checked + .slider {
+            background-color: rgba(59,130,246,0.9);
+        }
+        input:checked + .slider::after { transform: translateX(20px); }
+
+        /* Map Tailwind slate text utilities to our variables so they adapt between themes */
+        .text-slate-800 { color: var(--text-800) !important; }
+        .text-slate-700 { color: var(--text-700) !important; }
+        .text-slate-600 { color: var(--text-600) !important; }
+        .text-slate-500 { color: var(--text-500) !important; }
+        .text-slate-400 { color: var(--text-400) !important; }
+        .text-slate-300 { color: var(--text-300) !important; }
+
+        /* Keep readable contrast for light-background elements when dark theme is active */
+        /* Prefer targeted overrides: don't globally change the text color for all elements with light backgrounds (it may contain colored text) */
+
+        /* Also ensure nested text within these light backgrounds remain dark in dark theme */
+        .dark .bg-white .text-slate-300, .dark .bg-white .text-slate-400, .dark .bg-white .text-slate-500, .dark .bg-white .text-slate-600, .dark .bg-white .text-slate-700, .dark .bg-white .text-slate-800,
+        .dark .bg-white\/50 .text-slate-300, .dark .bg-white\/50 .text-slate-400, .dark .bg-white\/50 .text-slate-500, .dark .bg-white\/50 .text-slate-600, .dark .bg-white\/50 .text-slate-700, .dark .bg-white\/50 .text-slate-800,
+        .dark .bg-white\/60 .text-slate-300, .dark .bg-white\/60 .text-slate-400, .dark .bg-white\/60 .text-slate-500, .dark .bg-white\/60 .text-slate-600, .dark .bg-white\/60 .text-slate-700, .dark .bg-white\/60 .text-slate-800,
+        .dark .bg-slate-100 .text-slate-300, .dark .bg-slate-100 .text-slate-400, .dark .bg-slate-100 .text-slate-500, .dark .bg-slate-100 .text-slate-600, .dark .bg-slate-100 .text-slate-700, .dark .bg-slate-100 .text-slate-800,
+        .dark .bg-slate-200 .text-slate-300, .dark .bg-slate-200 .text-slate-400, .dark .bg-slate-200 .text-slate-500, .dark .bg-slate-200 .text-slate-600, .dark .bg-slate-200 .text-slate-700, .dark .bg-slate-200 .text-slate-800 {
+            color: var(--text-800) !important; /* force darker text for readability */
+        }
+
+        /* Keep 'COMPLETED' status and similar light-bg badges text dark in dark mode */
+        .dark .bg-slate-100.text-slate-600,
+        .dark .bg-white.text-slate-600,
+        .dark .bg-white\/50.text-slate-600,
+        .dark .bg-white\/40.text-slate-600 {
+            color: var(--text-contrast) !important;
+        }
+
+        /* Ensure 'Complete Sprint' button or header close icon remain legible */
+        .dark .bg-white\/60 .text-slate-500,
+        .dark .bg-white\/60.text-slate-500 {
+            color: var(--text-contrast) !important;
+        }
+
+        /* Also include lighter white tints (30/40) used in the UI */
+        .dark .bg-white\/30 .text-slate-400, .dark .bg-white\/30 .text-slate-500, .dark .bg-white\/30 .text-slate-600,
+        .dark .bg-white\/40 .text-slate-400, .dark .bg-white\/40 .text-slate-500, .dark .bg-white\/40 .text-slate-600 {
+            color: var(--text-contrast) !important;
+        }
+
+        /* Always keep completed badge and 'Complete Sprint' button text dark for better contrast in both themes */
+        .glass-panel .px-2.py-0\.5.rounded-full.text-slate-600,
+        .glass-panel button.bg-white.text-slate-600,
+        .glass-panel .bg-slate-100.text-slate-600 {
+            color: var(--text-contrast) !important;
+        }
+
+        /* Also ensure the Clear Filter (bg-white text-slate-700) remains dark in both themes */
+        .glass-panel button.bg-white.text-slate-700,
+        .glass-panel button.bg-white\/50.text-slate-700,
+        .glass-panel button.bg-white\/60.text-slate-700,
+        .dark .glass-panel button.bg-white.text-slate-700,
+        .dark .glass-panel button.bg-white\/50.text-slate-700,
+        .dark .glass-panel button.bg-white\/60.text-slate-700 {
+            color: var(--text-contrast) !important;
+        }
+
+        /* If the background and text classes are on the same element, ensure we keep dark text for readability */
+        .dark .bg-white.text-slate-300, .dark .bg-white.text-slate-400, .dark .bg-white.text-slate-500, .dark .bg-white.text-slate-600, .dark .bg-white.text-slate-700, .dark .bg-white.text-slate-800,
+        .dark .bg-white\/50.text-slate-300, .dark .bg-white\/50.text-slate-400, .dark .bg-white\/50.text-slate-500, .dark .bg-white\/50.text-slate-600, .dark .bg-white\/50.text-slate-700, .dark .bg-white\/50.text-slate-800,
+        .dark .bg-white\/60.text-slate-300, .dark .bg-white\/60.text-slate-400, .dark .bg-white\/60.text-slate-500, .dark .bg-white\/60.text-slate-600, .dark .bg-white\/60.text-slate-700, .dark .bg-white\/60.text-slate-800,
+        .dark .bg-slate-100.text-slate-300, .dark .bg-slate-100.text-slate-400, .dark .bg-slate-100.text-slate-500, .dark .bg-slate-100.text-slate-600, .dark .bg-slate-100.text-slate-700, .dark .bg-slate-100.text-slate-800,
+        .dark .bg-slate-200.text-slate-300, .dark .bg-slate-200.text-slate-400, .dark .bg-slate-200.text-slate-500, .dark .bg-slate-200.text-slate-600, .dark .bg-slate-200.text-slate-700, .dark .bg-slate-200.text-slate-800 {
+            color: var(--text-800) !important;
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // --- Authentication Helpers & Mock Storage ---
+        const saveAuth = (profile) => {
+            localStorage.setItem('jiraCloneAuth', 'true');
+            localStorage.setItem('jiraCloneProfile', JSON.stringify(profile));
+        };
+
+        const clearAuth = () => {
+            localStorage.removeItem('jiraCloneAuth');
+            // keep profile in localStorage for convenience but remove flag
+        };
 
         // --- Mock Data & Constants ---
         const INITIAL_DATA = [
@@ -150,6 +311,95 @@
             bug: { label: 'Bug', color: 'bg-rose-500', icon: 'Bug' },
             story: { label: 'Story', color: 'bg-emerald-500', icon: 'BookOpen' },
             task: { label: 'Task', color: 'bg-sky-500', icon: 'CheckSquare' }
+        };
+
+        // PieChart component using Chart.js (global Chart available via CDN)
+        const PieChart = ({ typeCounts, size = 140, onSliceClick, selectedSlice }) => {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+            useEffect(() => {
+                if (!canvasRef.current || !window.Chart) return;
+                // register datalabels plugin if present
+                if (window.Chart && window.ChartDataLabels) {
+                    try { window.Chart.register(window.ChartDataLabels); } catch (e) {}
+                }
+
+                const ctx = canvasRef.current.getContext('2d');
+                const data = [typeCounts.bug || 0, typeCounts.story || 0, typeCounts.task || 0];
+                const labels = ['Bug', 'Story', 'Task'];
+                const colors = ['#ef4444', '#10b981', '#0ea5e9']; // rose-500, emerald-500, sky-500
+                const bgColors = labels.map((l, i) => {
+                    if (!selectedSlice) return colors[i];
+                    return (selectedSlice.toLowerCase() === labels[i].toLowerCase()) ? colors[i] : 'rgba(148,163,184,0.15)';
+                });
+                const offsets = labels.map((l, i) => {
+                    if (!selectedSlice) return 0;
+                    return (selectedSlice.toLowerCase() === labels[i].toLowerCase()) ? 8 : 0;
+                });
+
+                const chart = new window.Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data,
+                            backgroundColor: bgColors,
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1
+                            , offset: (ctx) => offsets[ctx.dataIndex] || 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 600, easing: 'easeOutQuart' },
+                        plugins: {
+                            legend: { display: false },
+                            // tooltips are disabled because hover should not change display
+                            tooltip: { enabled: false },
+                                datalabels: {
+                                color: '#ffffff',
+                                formatter: function(value, ctx) {
+                                    const dataArr = ctx.dataset.data;
+                                    const total = dataArr.reduce((a, b) => a + b, 0) || 1;
+                                    const percent = Math.round((value / total) * 100);
+                                    return percent > 0 ? `${percent}%` : '';
+                                },
+                                font: { weight: 'bold', size: 12 }
+                                }
+                            
+                        },
+                        onClick: (evt, elements) => {
+                            if (elements && elements.length > 0) {
+                                const idx = elements[0].index;
+                                const label = chart.data.labels[idx];
+                                if (onSliceClick) onSliceClick(label);
+                            }
+                        }
+                        
+                    }
+                });
+                chartRef.current = chart;
+
+                return () => { if (chart) chart.destroy(); chartRef.current = null; };
+            }, [typeCounts, selectedSlice]);
+
+            // If not authenticated, show a login page
+            if (!isAuthenticated) {
+                return (
+                    <LoginPage
+                        onSignIn={handleAuthSignIn}
+                        onSignUp={handleAuthSignUp}
+                        onGoogle={handleAuthGoogle}
+                    />
+                );
+            }
+
+            return (
+                <div className="w-full h-full relative flex items-center justify-center" style={{ width: size, height: size }}>
+                    <canvas ref={canvasRef} width={size} height={size} />
+                </div>
+            );
         };
 
         // --- Components ---
@@ -581,7 +831,88 @@
             );
         };
 
-        const SettingsModal = ({ isOpen, onClose, columns, onUpdateColumns, teamMembers, onRemoveMember, pendingInvites, onRevokeInvite }) => {
+        /* Sign In / Sign Up Modal Components */
+        const SignInModal = ({ isOpen, onClose, onSignIn }) => {
+            const [form, setForm] = useState({ email: '' });
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-60 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="glass-modal rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+                        <div className="bg-white/60 backdrop-blur-md border-b border-white/50 px-6 py-4 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-slate-800">Sign In</h3>
+                            <button onClick={onClose} className="p-2 hover:bg-white/50 text-slate-500 rounded-lg transition-colors">X</button>
+                        </div>
+                        <div className="p-6">
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Email</label>
+                            <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="w-full bg-white/50 border border-white/40 rounded-lg p-2.5 text-slate-800 text-sm" />
+                            <div className="pt-4 flex justify-end gap-3">
+                                <button onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancel</button>
+                                <button onClick={() => { onSignIn(form); onClose(); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Sign In</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SignUpModal = ({ isOpen, onClose, onSignUp }) => {
+            const [form, setForm] = useState({ name: '', email: '' });
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-60 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="glass-modal rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+                        <div className="bg-white/60 backdrop-blur-md border-b border-white/50 px-6 py-4 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-slate-800">Sign Up</h3>
+                            <button onClick={onClose} className="p-2 hover:bg-white/50 text-slate-500 rounded-lg transition-colors">X</button>
+                        </div>
+                        <div className="p-6">
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Full Name</label>
+                            <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} className="w-full bg-white/50 border border-white/40 rounded-lg p-2.5 text-slate-800 text-sm" />
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1 mt-4">Email</label>
+                            <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="w-full bg-white/50 border border-white/40 rounded-lg p-2.5 text-slate-800 text-sm" />
+                            <div className="pt-4 flex justify-end gap-3">
+                                <button onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancel</button>
+                                <button onClick={() => { onSignUp(form); onClose(); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Sign Up</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const LoginPage = ({ onSignIn, onSignUp, onGoogle }) => {
+            const [isSignInOpen, setSignInOpen] = useState(false);
+            const [isSignUpOpen, setSignUpOpen] = useState(false);
+
+            const handleGoogle = () => {
+                const email = prompt('Enter your Google email (simulated OAuth):');
+                if (email) onGoogle(email);
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-700 via-purple-700 to-pink-500">
+                    <div className="glass-modal p-8 rounded-3xl w-full max-w-4xl flex items-center gap-8">
+                        <div className="flex-1 text-white">
+                            <h1 className="text-4xl font-bold mb-3">GlassBoard</h1>
+                            <p className="mb-6 text-lg">Elegant board with glassmorphism. Sign in to continue.</p>
+                            <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold shadow-md flex items-center gap-3" onClick={handleGoogle}>
+                                <img src="https://www.svgrepo.com/show/355037/google.svg" alt="google" className="w-5 h-5" />
+                                Continue with Google
+                            </button>
+                            <div className="mt-8 flex gap-3">
+                                <button className="px-4 py-2 rounded-lg bg-white/10 text-white" onClick={() => setSignInOpen(true)}>Sign In</button>
+                                <button className="px-4 py-2 rounded-lg bg-white text-blue-600 font-bold" onClick={() => setSignUpOpen(true)}>Sign Up</button>
+                            </div>
+                        </div>
+                        <div className="hidden md:block w-56 h-56 bg-gradient-to-tr from-white/30 to-white/10 rounded-xl"></div>
+                        <SignInModal isOpen={isSignInOpen} onClose={() => setSignInOpen(false)} onSignIn={onSignIn} />
+                        <SignUpModal isOpen={isSignUpOpen} onClose={() => setSignUpOpen(false)} onSignUp={onSignUp} />
+                    </div>
+                </div>
+            );
+        };
+
+        const SettingsModal = ({ isOpen, onClose, columns, onUpdateColumns, teamMembers, onRemoveMember, pendingInvites, onRevokeInvite, theme, onToggleTheme }) => {
             if (!isOpen) return null;
 
             const [activeTab, setActiveTab] = useState('board');
@@ -631,6 +962,12 @@
                                     className={`text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'team' ? 'bg-blue-100 text-blue-700' : 'text-slate-600 hover:bg-white/40'}`}
                                 >
                                     Team Management
+                                </button>
+                                <button 
+                                    onClick={() => setActiveTab('appearance')}
+                                    className={`text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'appearance' ? 'bg-blue-100 text-blue-700' : 'text-slate-600 hover:bg-white/40'}`}
+                                >
+                                    Appearance
                                 </button>
                             </div>
 
@@ -737,6 +1074,32 @@
 
                                     </div>
                                 )}
+
+                                {activeTab === 'appearance' && (
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-700 mb-2">Appearance</h4>
+                                            <p className="text-sm text-slate-500 mb-4">Select a theme for the application interface.</p>
+
+                                            <div className="flex items-center gap-4">
+                                                <div className="theme-toggle items-center">
+                                                    <label className="flex items-center gap-3">
+                                                        <Icon name="sun" size={16} />
+                                                        <span className="text-sm font-medium text-slate-700">Light</span>
+                                                    </label>
+                                                    <label className="ml-3 toggle-switch">
+                                                        <input aria-label="Toggle dark mode" type="checkbox" checked={theme === 'dark'} onChange={onToggleTheme} />
+                                                        <span className="slider"></span>
+                                                    </label>
+                                                    <label className="flex items-center gap-3 ml-3">
+                                                        <Icon name="moon" size={16} />
+                                                        <span className="text-sm font-medium text-slate-700">Dark</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -744,7 +1107,7 @@
             );
         };
 
-        const ProfileDashboard = ({ isOpen, onClose, profile, onSave }) => {
+        const ProfileDashboard = ({ isOpen, onClose, profile, onSave, onSignOut }) => {
             if (!isOpen) return null;
 
             const [isEditing, setIsEditing] = useState(false);
@@ -780,13 +1143,16 @@
                                     {formData.initials}
                                 </div>
                                 {!isEditing ? (
-                                    <button 
-                                        onClick={() => setIsEditing(true)}
-                                        className="bg-white/10 hover:bg-white/20 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium border border-white/20 backdrop-blur-sm transition-all flex items-center gap-2"
-                                    >
-                                        <Icon name="edit-2" size={16} />
-                                        Edit Profile
-                                    </button>
+                                    <>
+                                        <button 
+                                            onClick={() => setIsEditing(true)}
+                                            className="bg-white/10 hover:bg-white/20 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium border border-white/20 backdrop-blur-sm transition-all flex items-center gap-2"
+                                        >
+                                            <Icon name="edit-2" size={16} />
+                                            Edit Profile
+                                        </button>
+                                        <button onClick={() => { if (onSignOut) onSignOut(); }} className="bg-rose-50 text-rose-600 px-3 py-2 rounded-lg">Sign Out</button>
+                                    </>
                                 ) : (
                                     <div className="flex gap-2">
                                         <button 
@@ -801,6 +1167,13 @@
                                         >
                                             <Icon name="check" size={16} />
                                             Save Changes
+                                        </button>
+                                        <button 
+                                            onClick={() => { if (onSignOut) onSignOut(); }}
+                                            className="px-4 py-2 bg-white text-slate-700 rounded-lg hover:bg-white/80 transition-all shadow-sm"
+                                            title="Sign out"
+                                        >
+                                            Sign Out
                                         </button>
                                     </div>
                                 )}
@@ -1066,28 +1439,36 @@
         const ReportsDashboard = ({ isOpen, onClose, tickets, columns }) => {
             if (!isOpen) return null;
 
-            const totalTickets = tickets.length;
+            const [selectedType, setSelectedType] = useState(null);
+            const totalTickets = (selectedType ? tickets.filter(t => t.type === selectedType) : tickets).length;
             
+            const filteredTickets = selectedType ? tickets.filter(t => t.type === selectedType) : tickets;
             const statusData = columns.map(col => ({
                 ...col,
-                count: tickets.filter(t => t.status === col.id).length,
-                percent: totalTickets ? Math.round((tickets.filter(t => t.status === col.id).length / totalTickets) * 100) : 0
+                count: filteredTickets.filter(t => t.status === col.id).length,
+                percent: totalTickets ? Math.round((filteredTickets.filter(t => t.status === col.id).length / totalTickets) * 100) : 0
             }));
 
             const priorityCounts = {
-                high: tickets.filter(t => t.priority === 'high').length,
-                medium: tickets.filter(t => t.priority === 'medium').length,
-                low: tickets.filter(t => t.priority === 'low').length,
+                high: filteredTickets.filter(t => t.priority === 'high').length,
+                medium: filteredTickets.filter(t => t.priority === 'medium').length,
+                low: filteredTickets.filter(t => t.priority === 'low').length,
             };
 
-            const typeCounts = {
+            // Keep pie chart based on global counts (unfiltered) so it shows distribution of all types
+            const globalTypeCounts = {
                 bug: tickets.filter(t => t.type === 'bug').length,
                 story: tickets.filter(t => t.type === 'story').length,
                 task: tickets.filter(t => t.type === 'task').length,
             };
+            const typeCounts = {
+                bug: filteredTickets.filter(t => t.type === 'bug').length,
+                story: filteredTickets.filter(t => t.type === 'story').length,
+                task: filteredTickets.filter(t => t.type === 'task').length,
+            };
 
             const assigneeData = Object.entries(
-                tickets.reduce((acc, t) => {
+                filteredTickets.reduce((acc, t) => {
                     acc[t.assignee] = (acc[t.assignee] || 0) + 1;
                     return acc;
                 }, {})
@@ -1105,6 +1486,11 @@
                                 <div>
                                     <h2 className="text-xl font-bold text-slate-800">Project Analytics</h2>
                                     <p className="text-sm text-slate-500">Real-time overview of project health and velocity.</p>
+                                    {selectedType && (
+                                        <div className="mt-1">
+                                            <span className="px-2 py-0.5 rounded-full bg-white/20 text-slate-100 text-xs font-semibold">Filtered: {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-2 hover:bg-rose-50 hover:text-rose-500 text-slate-400 rounded-lg transition-colors">
@@ -1245,22 +1631,40 @@
                                     <h3 className="text-lg font-bold text-slate-700 mb-6 flex items-center gap-2">
                                         <Icon name="tag" size={20} /> Issue Types
                                     </h3>
-                                    <div className="flex justify-center gap-8">
-                                        {Object.entries(typeCounts).map(([type, count]) => {
-                                            const config = TYPES[type];
-                                            return (
-                                                <div key={type} className="text-center">
-                                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mb-3 mx-auto ${config.color} transform hover:scale-110 transition-transform`}>
-                                                        {count}
-                                                    </div>
-                                                    <div className="flex items-center justify-center gap-1.5 text-slate-600 font-medium">
-                                                        <Icon name={config.icon} size={14} />
-                                                        <span className="capitalize text-sm">{config.label}</span>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                    <div className="flex flex-col lg:flex-row items-center justify-center gap-6 text-center">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-48 h-48 flex items-center justify-center">
+                                                <PieChart typeCounts={globalTypeCounts} size={140} onSliceClick={(label) => {
+                                                    const key = label.toLowerCase();
+                                                    setSelectedType(prev => prev === key ? null : key);
+                                                }} selectedSlice={selectedType ? selectedType.charAt(0).toUpperCase() + selectedType.slice(1) : null} />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                {Object.entries(globalTypeCounts).map(([type, count]) => {
+                                                    const config = TYPES[type];
+                                                    const colorMap = { bug: 'bg-rose-100 text-rose-600', story: 'bg-emerald-100 text-emerald-600', task: 'bg-sky-100 text-sky-600' };
+                                                    const boxColor = colorMap[type] || 'bg-sky-100 text-sky-600';
+                                                    // show percent and count relative to global totals
+                                                    const total = Object.values(globalTypeCounts).reduce((s, v) => s + v, 0) || 1;
+                                                    const percent = Math.round((count / total) * 100);
+                                                    return (
+                                                        <div key={type} className="flex items-center gap-3">
+                                                            <div className={`w-3 h-3 rounded ${config.color}`}></div>
+                                                            <div className="text-sm font-bold text-slate-700 capitalize">{config.label}</div>
+                                                            <div className="text-sm text-slate-500">{count}</div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
                                     </div>
+                                    {selectedType && (
+                                        <div className="mt-4 text-center">
+                                            <button className="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-bold transition-colors shadow-sm" onClick={() => setSelectedType(null)}>
+                                                Clear Filter
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                             </div>
@@ -1479,6 +1883,12 @@
             const [isProfileOpen, setIsProfileOpen] = useState(false);
             const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
             const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+            const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('jiraCloneAuth') === 'true');
+            const [theme, setTheme] = useState(() => {
+                const saved = localStorage.getItem('jiraCloneTheme');
+                if (saved) return saved;
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            });
             
             const [selectedTicket, setSelectedTicket] = useState(null);
             const [draggedTicketId, setDraggedTicketId] = useState(null);
@@ -1493,6 +1903,19 @@
             useEffect(() => { localStorage.setItem('jiraCloneProfile', JSON.stringify(userProfile)); }, [userProfile]);
             useEffect(() => { localStorage.setItem('jiraCloneColumns', JSON.stringify(columns)); }, [columns]);
             useEffect(() => { localStorage.setItem('jiraCloneSprints', JSON.stringify(sprints)); }, [sprints]);
+            useEffect(() => { localStorage.setItem('jiraCloneTheme', theme); }, [theme]);
+
+            useEffect(() => {
+                localStorage.setItem('jiraCloneAuth', isAuthenticated ? 'true' : '');
+            }, [isAuthenticated]);
+
+            useEffect(() => {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }, [theme]);
 
             // --- HELPERS ---
             const uniqueAssignees = useMemo(() => {
@@ -1583,6 +2006,59 @@
 
             const handleUpdateSprintStatus = (id, newStatus) => {
                 setSprints(sprints.map(s => s.id === id ? { ...s, status: newStatus, progress: newStatus === 'completed' ? 100 : s.progress } : s));
+            };
+
+            // Authentication flows (mocked)
+            const handleAuthSignIn = ({ email }) => {
+                // if we have a saved profile, use it; otherwise create a minimal one
+                const saved = localStorage.getItem('jiraCloneProfile');
+                let profile = saved ? JSON.parse(saved) : null;
+                if (!profile || profile.email !== email) {
+                    profile = {
+                        name: email.split('@')[0],
+                        role: 'Member',
+                        email,
+                        initials: email.substring(0,2).toUpperCase(),
+                        location: '',
+                        bio: ''
+                    };
+                }
+                setUserProfile(profile);
+                saveAuth(profile);
+                setIsAuthenticated(true);
+            };
+
+            const handleAuthSignUp = ({ name, email }) => {
+                const profile = {
+                    name: name || email.split('@')[0],
+                    role: 'Member',
+                    email,
+                    initials: (name || email.split('@')[0]).split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase(),
+                    location: '',
+                    bio: ''
+                };
+                setUserProfile(profile);
+                saveAuth(profile);
+                setIsAuthenticated(true);
+            };
+
+            const handleAuthGoogle = (email) => {
+                const profile = {
+                    name: email.split('@')[0],
+                    role: 'Member',
+                    email,
+                    initials: email.substring(0,2).toUpperCase(),
+                    location: '',
+                    bio: ''
+                };
+                setUserProfile(profile);
+                saveAuth(profile);
+                setIsAuthenticated(true);
+            };
+
+            const handleSignOut = () => {
+                setIsAuthenticated(false);
+                clearAuth();
             };
 
             return (
@@ -1798,10 +2274,11 @@
                     />
 
                     <ProfileDashboard 
-                        isOpen={isProfileOpen}
+                        isOpen={isProfileOpen} 
                         onClose={() => setIsProfileOpen(false)}
                         profile={userProfile}
                         onSave={handleUpdateProfile}
+                        onSignOut={handleSignOut}
                     />
 
                     <AddMemberModal 
@@ -1820,6 +2297,8 @@
                         onRemoveMember={handleRemoveMember}
                         pendingInvites={pendingInvites}
                         onRevokeInvite={handleRevokeInvite}
+                        theme={theme}
+                        onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                     />
                 </div>
             );
