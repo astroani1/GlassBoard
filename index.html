@@ -384,16 +384,7 @@
                 return () => { if (chart) chart.destroy(); chartRef.current = null; };
             }, [typeCounts, selectedSlice]);
 
-            // If not authenticated, show a login page
-            if (!isAuthenticated) {
-                return (
-                    <LoginPage
-                        onSignIn={handleAuthSignIn}
-                        onSignUp={handleAuthSignUp}
-                        onGoogle={handleAuthGoogle}
-                    />
-                );
-            }
+            // PieChart should not handle authentication; simply render the chart canvas
 
             return (
                 <div className="w-full h-full relative flex items-center justify-center" style={{ width: size, height: size }}>
@@ -413,7 +404,7 @@
             return <i data-lucide={name} width={size} height={size} className={className}></i>;
         };
 
-        const Sidebar = ({ onOpenBacklog, onOpenReports, onOpenSprints, onOpenProfile, isExpanded, toggleSidebar, userProfile }) => (
+        const Sidebar = ({ onOpenBacklog, onOpenReports, onOpenSprints, onOpenProfile, onOpenCode, isExpanded, toggleSidebar, userProfile }) => (
             <div className={`glass-sidebar h-screen flex flex-col fixed left-0 top-0 z-30 text-slate-300 transition-all duration-300 ease-in-out ${isExpanded ? 'w-64' : 'w-16'}`}>
                 <div 
                     onClick={toggleSidebar}
@@ -460,10 +451,10 @@
                         <div className="mt-8 px-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 animate-in fade-in duration-300">Development</div>
                     )}
 
-                    <a href="#" className={`flex items-center py-2.5 hover:bg-white/5 hover:text-white transition-all duration-300 ${isExpanded ? 'px-6 justify-start' : 'justify-center'}`} title="Code">
+                    <button onClick={onOpenCode} className={`w-full flex items-center py-2.5 hover:bg-white/5 hover:text-white transition-all duration-300 text-left ${isExpanded ? 'px-6 justify-start' : 'justify-center'}`} title="Code">
                         <Icon name="code" size={20} />
                         {isExpanded && <span className="ml-3 font-medium animate-in fade-in duration-200">Code</span>}
-                    </a>
+                    </button>
                     <button 
                         onClick={onOpenSprints}
                         className={`w-full flex items-center py-2.5 hover:bg-white/5 hover:text-white transition-all duration-300 text-left ${isExpanded ? 'px-6 justify-start' : 'justify-center'}`}
@@ -1675,6 +1666,92 @@
             );
         };
 
+        const CodeDashboard = ({ isOpen, onClose, repoInfo = {}, files = [], onOpenFile }) => {
+            if (!isOpen) return null;
+            const [branch, setBranch] = useState('main');
+            const [search, setSearch] = useState('');
+            const [selectedFile, setSelectedFile] = useState(files[0] || null);
+
+            const filteredFiles = (files || []).filter(f => f.name.toLowerCase().includes(search.toLowerCase()));
+
+            return (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="glass-modal rounded-2xl w-full max-w-6xl h-[90vh] flex overflow-hidden shadow-2xl">
+                        <div className="w-64 p-4 border-r border-white/20 bg-white/10 flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <div className="text-sm font-bold text-slate-700">{repoInfo.name || 'Repo'}</div>
+                                    <div className="text-xs text-slate-500">{repoInfo.owner || 'Owner'}</div>
+                                </div>
+                                <select value={branch} onChange={(e) => setBranch(e.target.value)} className="text-xs p-1 bg-white/10 rounded text-white">
+                                    <option value="main">main</option>
+                                    <option value="develop">develop</option>
+                                    <option value="feature">feature/sample</option>
+                                </select>
+                            </div>
+
+                            <div className="mt-3">
+                                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search files" className="w-full px-2 py-1 text-sm rounded bg-white/20 text-white" />
+                                <div className="mt-2 max-h-[60vh] overflow-y-auto">
+                                    {filteredFiles.map(f => (
+                                        <button key={f.path} onClick={() => { setSelectedFile(f); if (onOpenFile) onOpenFile(f); }} className="w-full text-left p-2 rounded hover:bg-white/10 text-sm text-white">
+                                            <div className="flex items-center justify-between">
+                                                <span className="truncate">{f.name}</span>
+                                                <span className="text-[10px] text-slate-300">{f.path.split('/').slice(-1)[0]}</span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                    {filteredFiles.length === 0 && <div className="text-xs text-slate-400 p-2">No files found</div>}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 p-4 overflow-auto bg-white/30">
+                            <div className="flex items-center justify-between mb-3">
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-800">{selectedFile ? selectedFile.name : 'Select a file'}</h3>
+                                    <div className="text-xs text-slate-500">{selectedFile ? selectedFile.path : ''}</div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button className="px-3 py-1 bg-blue-600 text-white rounded">Create PR</button>
+                                    <button onClick={onClose} className="px-3 py-1 bg-white/10 rounded">Close</button>
+                                </div>
+                            </div>
+
+                            <div className="h-[60vh] overflow-auto bg-white/90 rounded p-3 text-sm text-slate-800">
+                                {selectedFile ? (
+                                    <pre className="whitespace-pre-wrap"><code>{selectedFile.content || '// file content placeholder'}</code></pre>
+                                ) : (
+                                    <div className="text-slate-500">Open a file to view its contents and recent commits.</div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="w-80 p-4 border-l border-white/20 bg-white/10 flex flex-col gap-3">
+                            <h4 className="text-sm font-bold text-slate-700">Recent Commits</h4>
+                            <div className="space-y-2 overflow-y-auto">
+                                {(selectedFile?.commits || []).map(c => (
+                                    <div key={c.sha} className="p-2 bg-white/20 rounded text-xs text-white">
+                                        <div className="font-bold">{c.message}</div>
+                                        <div className="text-slate-400">{c.author} • {c.date}</div>
+                                    </div>
+                                ))}
+                                {(!selectedFile || (selectedFile.commits || []).length === 0) && <div className="text-xs text-slate-500">No commits to show</div>}
+                            </div>
+
+                            <div className="mt-auto">
+                                <h4 className="text-xs font-bold text-slate-400 uppercase mb-2">PRs & CI</h4>
+                                <div className="space-y-2">
+                                    <div className="p-2 bg-white/20 rounded text-xs text-white">PR #42 — Add login flow — <span className="text-slate-300">Open</span></div>
+                                    <div className="p-2 bg-white/20 rounded text-xs text-white">CI: build/main — <span className="text-green-400">Passing</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const TicketModal = ({ isOpen, onClose, ticket, onSave, onDelete, columns }) => {
             if (!isOpen) return null;
 
@@ -1881,6 +1958,7 @@
             const [isSprintsOpen, setIsSprintsOpen] = useState(false); // Sprints Modal
             const [isCreateSprintOpen, setIsCreateSprintOpen] = useState(false); // Create Sprint Modal
             const [isProfileOpen, setIsProfileOpen] = useState(false);
+            const [isCodeOpen, setIsCodeOpen] = useState(false);
             const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
             const [isSettingsOpen, setIsSettingsOpen] = useState(false);
             const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('jiraCloneAuth') === 'true');
@@ -2070,6 +2148,17 @@
                 console.log('Signed out');
             };
 
+            // If user isn't authenticated, show the Login page at the root level (credentials flow handled here)
+            if (!isAuthenticated) {
+                return (
+                    <LoginPage
+                        onSignIn={handleAuthSignIn}
+                        onSignUp={handleAuthSignUp}
+                        onGoogle={handleAuthGoogle}
+                    />
+                );
+            }
+
             return (
                 <div className="flex min-h-screen">
                     <Sidebar 
@@ -2077,6 +2166,7 @@
                         toggleSidebar={() => setSidebarExpanded(!isSidebarExpanded)}
                         onOpenBacklog={() => setIsListOpen(true)} 
                         onOpenReports={() => setIsReportsOpen(true)}
+                        onOpenCode={() => setIsCodeOpen(true)}
                         onOpenSprints={() => setIsSprintsOpen(true)}
                         onOpenProfile={() => setIsProfileOpen(true)}
                         userProfile={userProfile}
@@ -2148,7 +2238,7 @@
                                 >
                                     <Icon name="settings" size={20} />
                                 </button>
-                                <button onClick={handleSignOut} className="px-3 py-1.5 rounded-lg text-sm bg-white/10 text-white hover:bg-white/20 transition-all">Sign Out</button>
+                                {/* Removed sign out button from header - sign out is still available in Profile modal */}
                             </div>
                         </header>
 
@@ -2267,6 +2357,18 @@
                         onClose={() => setIsReportsOpen(false)}
                         tickets={tickets}
                         columns={columns}
+                    />
+
+                    <CodeDashboard
+                        isOpen={isCodeOpen}
+                        onClose={() => setIsCodeOpen(false)}
+                        repoInfo={{ name: 'GlassBoard', owner: 'GlassTeam' }}
+                        files={[
+                            { name: 'App.js', path: '/src/App.js', content: '// Sample App.js content\nconsole.log("Hello World")', commits: [{ sha: 'abc123', message: 'Init App', author: 'JD', date: '2024-01-01' }] },
+                            { name: 'index.html', path: '/index.html', content: '<!-- Index HTML placeholder -->', commits: [{ sha: 'def456', message: 'Add index', author: 'AS', date: '2024-01-02' }] },
+                            { name: 'styles.css', path: '/styles/styles.css', content: '/* CSS placeholder */', commits: [] }
+                        ]}
+                        onOpenFile={(f) => { console.log('Open file', f); }}
                     />
 
                     <SprintsDashboard 
